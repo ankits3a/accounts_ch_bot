@@ -186,7 +186,7 @@ def _local_save_path(data: dict, filename: str) -> str:
     month = fy_utils.get_month_folder(inv_date)
     entity = _sanitize(data.get("entity") or "Unknown")
 
-    path = Path("invoices") / entity / "Party_Invoices" / type_dir / fy / party_name / month
+    path = Path("invoices") / entity / "Party_Invoices" / type_dir / party_name / fy / month
     path.mkdir(parents=True, exist_ok=True)
     return str(path / filename)
 

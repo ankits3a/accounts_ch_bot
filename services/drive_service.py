@@ -102,8 +102,8 @@ class DriveService:
         f = self._get_or_create_folder(entity, root_id)
         f = self._get_or_create_folder("Party_Invoices", f)
         f = self._get_or_create_folder(type_dir, f)
-        f = self._get_or_create_folder(fy, f)
         f = self._get_or_create_folder(party_name, f)
+        f = self._get_or_create_folder(fy, f)
         f = self._get_or_create_folder(month_folder, f)
         return f
 
