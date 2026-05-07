@@ -1,0 +1,9 @@
+python-telegram-bot==21.9
+google-genai>=1.0.0
+google-api-python-client>=2.100.0
+google-auth>=2.23.0
+google-auth-httplib2>=0.2.0
+google-auth-oauthlib>=1.0.0
+Pillow>=10.0.0
+img2pdf>=0.4.0
+python-dotenv>=1.0.0

@@ -1,0 +1,19 @@
+# Secrets — never commit these
+.env
+token.json
+client_secret.json
+credentials.json
+
+# Runtime
+*.db
+*.db-shm
+*.db-wal
+temp/
+invoices/
+__pycache__/
+*.pyc
+*.pyo
+*.log
+bot.log
+bot_err.log
+.claude/
