@@ -160,6 +160,43 @@ def format_summary(data: dict, timeout_sec: int | None = None) -> str:
 
 # ── File helpers ──────────────────────────────────────────────────────────────
 
+def _normalize_entity(raw: str) -> str:
+    """Match Gemini's entity output to the exact legal name.
+
+    Gemini sometimes returns partial names like 'Elarware Infra' or
+    'Chaurasia Enterprises'. This snaps to the full registered name.
+    Strategy: exact match → keyword match → best substring overlap.
+    """
+    if not raw:
+        return ENTITIES[0]
+
+    # 1. Exact match (case-insensitive)
+    for e in ENTITIES:
+        if e.lower() == raw.lower():
+            return e
+
+    raw_lower = raw.lower()
+
+    # 2. Unique keywords per entity that Gemini is unlikely to confuse
+    keywords = {
+        ENTITIES[0]: ["chaurasia"],
+        ENTITIES[1]: ["elarware"],
+        ENTITIES[2]: ["leelaraj", "infratech"],
+    }
+    for entity, kws in keywords.items():
+        if any(kw in raw_lower for kw in kws):
+            return entity
+
+    # 3. Best substring overlap — pick entity sharing most words with raw
+    raw_words = set(raw_lower.split())
+    best, best_score = ENTITIES[0], 0
+    for e in ENTITIES:
+        score = len(raw_words & set(e.lower().split()))
+        if score > best_score:
+            best, best_score = e, score
+    return best
+
+
 def _sanitize(name: str) -> str:
     return re.sub(r"[^\w\-]", "_", name)
 
@@ -442,6 +479,9 @@ async def _process_file(
 
         # Gemini extraction (uses original file for best quality)
         data = await gemini_service.extract_invoice(temp_path)
+
+        # Snap entity to exact known name — Gemini often returns partial names
+        data["entity"] = _normalize_entity(data.get("entity") or "")
 
         pending_invoices[chat_id] = {
             "data": data,
