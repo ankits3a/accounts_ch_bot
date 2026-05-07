@@ -802,8 +802,19 @@ def main():
     app.add_handler(CallbackQueryHandler(handle_callback))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
 
-    logger.info("Bot started. Polling…")
-    app.run_polling(allowed_updates=Update.ALL_TYPES)
+    webhook_url = os.getenv("WEBHOOK_URL", "")
+    if webhook_url:
+        logger.info("Bot started. Webhook: %s", webhook_url)
+        app.run_webhook(
+            listen="127.0.0.1",
+            port=8443,
+            url_path="/webhook",
+            webhook_url=f"{webhook_url}/webhook",
+            allowed_updates=Update.ALL_TYPES,
+        )
+    else:
+        logger.info("Bot started. Polling…")
+        app.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
 if __name__ == "__main__":
